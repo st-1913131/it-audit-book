@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Учебник по ИТ-аудиту</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            transition: background 0.5s;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 0.8s ease-out;
+            display: grid;
+            gap: 20px;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #3498db, #8e44ad);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        nav a {
+            text-decoration: none;
+            color: #3498db;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+        }
+        
+        nav a:hover {
+            background: #3498db;
+            color: #fff;
+            transform: scale(1.05);
+        }
+        
+        nav a i {
+            margin-right: 8px;
+        }
+        
+        .content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+        
+        .content.active {
+            display: block;
+            opacity: 1;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        .card {
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card i {
+            font-size: 1.5em;
+            color: #3498db;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        
+        #progress-bar {
+            height: 5px;
+            background: linear-gradient(90deg, #3498db, #8e44ad);
+            width: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            transition: width 0.2s;
+        }
+        
+        #search {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        
+        #search:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+        
+        .tooltip {
+            position: relative;
+            border-bottom: 2px dotted #3498db;
+            cursor: help;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 220px;
+            background: #2c3e50;
+            color: #fff;
+            text-align: center;
+            padding: 8px;
+            border-radius: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -110px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            animation: zoomIn 0.4s ease-out;
+            text-align: center;
+        }
+        
+        .floating-panel {
+            position: fixed;
+            right: 20px;
+            top: 150px;
+            background: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        
+        .floating-panel:hover {
+            transform: translateX(-10px);
+        }
+        
+        .timeline {
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+        }
+        
+        .timeline-item {
+            padding: 15px;
+            background: #fff;
+            border-left: 4px solid #3498db;
+            margin: 10px 0;
+            border-radius: 5px;
+            transition: transform 0.3s;
+        }
+        
+        .timeline-item:hover {
+            transform: translateX(10px);
+        }
+        
+        pre {
+            background: #f5f6fa;
+            padding: 15px;
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+        
+        .game-card {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .game-card button {
+            margin: 5px;
+            width: 80%;
+        }
+        
+        body.dark-mode {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: #ecf0f1;
+        }
+        
+        .container.dark-mode {
+            background: #34495e;
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+        }
+        
+        nav a.dark-mode {
+            color: #9b59b6;
+        }
+        
+        nav a.dark-mode:hover {
+            background: #9b59b6;
+            color: #fff;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="progress-bar"></div>
+    <div class="container">
+        <h1>Учебник по ИТ-аудиту</h1>
+        <button onclick="toggleDarkMode()"><i class="fas fa-moon"></i> Тёмная тема</button>
+        <button onclick="showRandomFact()"><i class="fas fa-lightbulb"></i> Случайный факт</button>
+        <input type="text" id="search" placeholder="Поиск по учебнику..." onkeyup="searchContent()">
+        <div id="bookmarks" class="card"><i class="fas fa-bookmark"></i>
+            <h3>Закладки</h3>
+        </div>
+        <nav>
+            <a href="#" onclick="showSection('intro')"><i class="fas fa-book"></i> Введение</a>
+            <a href="#" onclick="showSection('methods')"><i class="fas fa-tools"></i> Методы</a>
+            <a href="#" onclick="showSection('standards')"><i class="fas fa-shield-alt"></i> Стандарты</a>
+            <a href="#" onclick="showSection('itgc')"><i class="fas fa-cogs"></i> ITGC</a>
+        </nav>
+
+        <div id="intro" class="content active">
+            <div class="card">
+                <i class="fas fa-info-circle"></i>
+                <div>
+                    <h2>Введение в ИТ-аудит</h2>
+                    <p>ИТ-аудит — это процесс оценки <span class="tooltip">информационных систем<span class="tooltiptext">Комплекс ПО и оборудования.</span></span> для безопасности и эффективности.</p>
+                    <p>Возник в 1970-х с развитием компьютеров. Сегодня включает <span class="tooltip">кибербезопасность<span class="tooltiptext">Защита от атак.</span></span>.</p>
+                    <p><strong>Пример:</strong> Equifax (2017) — утечка 147 млн записей.</p>
+                    <div class="timeline">
+                        <h3><i class="fas fa-history"></i> История ИТ-аудита</h3>
+                        <div class="timeline-item">1967: Первый аудит IBM.</div>
+                        <div class="timeline-item">1980-е: Рост с ПК.</div>
+                        <div class="timeline-item">2000-е: Стандарты ISO.</div>
+                    </div>
+                    <button onclick="addBookmark('intro')"><i class="fas fa-bookmark"></i> В закладки</button>
+                    <button onclick="openModal()"><i class="fas fa-plus"></i> Дополнительно</button>
+                    <p><i class="fas fa-font"></i> Слов: <span id="intro-word-count">0</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div id="methods" class="content">
+            <div class="card">
+                <i class="fas fa-wrench"></i>
+                <div>
+                    <h2>Методы ИТ-аудита</h2>
+                    <p>Ключевые методы:</p>
+                    <ul>
+                        <li><i class="fas fa-search"></i> <strong>Анализ рисков:</strong> Оценка угроз.</li>
+                        <li><i class="fas fa-bug"></i> <strong>Тестирование:</strong> Nessus, OpenVAS.</li>
+                        <li><i class="fas fa-check"></i> <strong>Соответствие:</strong> GDPR.</li>
+                    </ul>
+                    <button onclick="showExample('risk-example')"><i class="fas fa-eye"></i> Пример анализа</button>
+                    <div id="risk-example" style="display:none; margin-top:10px;">
+                        <p>Оценка риска:</p>
+                        <pre>Риск = Вероятность (3) × Воздействие (4) = 12</pre>
+                    </div>
+                    <p><strong>Кейс:</strong> Twitter (2020) — улучшение MFA.</p>
+                    <button onclick="addBookmark('methods')"><i class="fas fa-bookmark"></i> В закладки</button>
+                    <p><i class="fas fa-font"></i> Слов: <span id="methods-word-count">0</span></p>
+                </div>
+            </div>
+            <div class="card">
+                <i class="fas fa-tools"></i>
+                <div>
+                    <h3>Инструменты</h3>
+                    <ul>
+                        <li><i class="fas fa-network-wired"></i> Wireshark: Анализ трафика.</li>
+                        <li><i class="fas fa-skull-crossbones"></i> Metasploit: Тесты.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div id="standards" class="content">
+            <div class="card">
+                <i class="fas fa-shield-alt"></i>
+                <div>
+                    <h2>Стандарты ИТ-аудита</h2>
+                    <p>Популярные стандарты:</p>
+                    <ul>
+                        <li><i class="fas fa-lock"></i> ISO 27001: Безопасность.</li>
+                        <li><i class="fas fa-cog"></i> COBIT: Управление.</li>
+                        <li><i class="fas fa-shield"></i> NIST: Защита.</li>
+                    </ul>
+                    <p>ISO 27001 — у 40 тыс. организаций.</p>
+                    <button onclick="addBookmark('standards')"><i class="fas fa-bookmark"></i> В закладки</button>
+                    <p><i class="fas fa-font"></i> Слов: <span id="standards-word-count">0</span></p>
+                </div>
+            </div>
+            <div class="card">
+                <i class="fas fa-briefcase"></i>
+                <div>
+                    <h3>Кейсы</h3>
+                    <p><i class="fas fa-exclamation-triangle"></i> Target (2013): Утечка 40 млн карт.</p>
+                    <p><i class="fas fa-video"></i> Zoom (2020): Улучшение шифрования.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="itgc" class="content">
+            <div class="card">
+                <i class="fas fa-cogs"></i>
+                <div>
+                    <h2>ITGC (Общие ИТ-контроли)</h2>
+                    <p><strong>ITGC</strong> — это ключевые контроли, обеспечивающие надежность ИТ-процессов для финансовой отчетности и операций. Они требуются по SOX и COSO.</p>
+                    <h3><i class="fas fa-list"></i> Типы ITGC</h3>
+                    <ul>
+                        <li><i class="fas fa-user-lock"></i> <strong>Контроль доступа:</strong> Ограничение прав (MFA, SSO).</li>
+                        <li><i class="fas fa-code-branch"></i> <strong>Управление изменениями:</strong> Контроль обновлений.</li>
+                        <li><i class="fas fa-save"></i> <strong>Бэкапы:</strong> Регулярное создание копий.</li>
+                        <li><i class="fas fa-shield-virus"></i> <strong>Безопасность:</strong> Мониторинг атак.</li>
+                        <li><i class="fas fa-server"></i> <strong>Управление инфраструктурой:</strong> Контроль серверов.</li>
+                    </ul>
+                    <button onclick="showExample('itgc-example')"><i class="fas fa-eye"></i> Пример ITGC</button>
+                    <div id="itgc-example" style="display:none; margin-top:10px;">
+                        <p>Контроль доступа:</p>
+                        <pre>- Политика: Доступ по роли
+- Проверка: Логи каждые 90 дней
+- Результат: Риск -25%</pre>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <i class="fas fa-question-circle"></i>
+                <div>
+                    <h3>Зачем нужны ITGC?</h3>
+                    <p><i class="fas fa-check-circle"></i> Точность отчетности.</p>
+                    <p><i class="fas fa-user-shield"></i> Защита от угроз.</p>
+                    <p><i class="fas fa-balance-scale"></i> Соответствие SOX, PCI DSS.</p>
+                    <p><strong>Статистика:</strong> 70% нарушений SOX из-за ITGC (PwC, 2022).</p>
+                </div>
+            </div>
+            <div class="card">
+                <i class="fas fa-tasks"></i>
+                <div>
+                    <h3>Аудит ITGC</h3>
+                    <p>1. <i class="fas fa-desktop"></i> Определите системы.<br>2. <i class="fas fa-key"></i> Проверьте доступ.<br>3. <i class="fas fa-sync"></i> Оцените изменения.</p>
+                    <p><strong>Кейс:</strong> Банк X внедрил бэкапы после аудита.</p>
+                    <p><strong>Пример:</strong> Аудит выявил 40% лишних доступов в ERP.</p>
+                    <button onclick="addBookmark('itgc')"><i class="fas fa-bookmark"></i> В закладки</button>
+                    <p><i class="fas fa-font"></i> Слов: <span id="itgc-word-count">0</span></p>
+                </div>
+            </div>
+            <div class="card game-card">
+                <i class="fas fa-gamepad"></i>
+                <div>
+                    <h3>Кто хочет стать миллионером?</h3>
+                    <p id="game-question">Нажми "Старт"!</p>
+                    <div id="game-options"></div>
+                    <p>Счет: <span id="game-score">0</span></p>
+                    <button onclick="startGame()"><i class="fas fa-play"></i> Старт</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <h2>Интересный факт</h2>
+            <p id="modal-fact">Первый ИТ-аудит был в 1967 году.</p>
+            <button onclick="closeModal()"><i class="fas fa-times"></i> Закрыть</button>
+        </div>
+    </div>
+
+    <div class="floating-panel">
+        <h4><i class="fas fa-compass"></i> Навигация</h4>
+        <a href="#" onclick="showSection('intro')"><i class="fas fa-book"></i> Введение</a><br>
+        <a href="#" onclick="showSection('methods')"><i class="fas fa-tools"></i> Методы</a><br>
+        <a href="#" onclick="showSection('standards')"><i class="fas fa-shield-alt"></i> Стандарты</a><br>
+        <a href="#" onclick="showSection('itgc')"><i class="fas fa-cogs"></i> ITGC</a>
+    </div>
+
+    <script>
+        const facts = [
+            "Первый ИТ-аудит был в 1967 году для IBM System/360.",
+            "ITGC снижают риски утечек на 30%.",
+            "SOX требует проверки ITGC ежегодно.",
+            "82% атак в 2022 — человеческий фактор (Verizon).",
+        ];
+
+        const quizQuestions = [{
+            question: "Что такое ITGC?",
+            options: ["Общие ИТ-контроли", "Инструменты аудита", "Стандарты ISO", "Методы тестирования"],
+            correct: 0
+        }, {
+            question: "Какой стандарт связан с ITGC?",
+            options: ["ISO 27001", "SOX", "NIST", "GDPR"],
+            correct: 1
+        }, {
+            question: "Что проверяет контроль доступа?",
+            options: ["Бэкапы", "Права пользователей", "Обновления", "Логи"],
+            correct: 1
+        }];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.content').forEach(section => {
+                section.classList.remove('active');
+            });
+            const section = document.getElementById(sectionId);
+            section.classList.add('active');
+            updateWordCount(sectionId);
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            document.querySelector('.container').classList.toggle('dark-mode');
+            document.querySelectorAll('nav a').forEach(link => link.classList.toggle('dark-mode'));
+        }
+
+        function searchContent() {
+            const query = document.getElementById('search').value.toLowerCase();
+            document.querySelectorAll('.content').forEach(section => {
+                const text = section.textContent.toLowerCase();
+                section.style.display = text.includes(query) ? 'block' : 'none';
+            });
+        }
+
+        function addBookmark(sectionId) {
+            const section = document.getElementById(sectionId);
+            const title = section.querySelector('h2').textContent;
+            const bookmarkList = document.getElementById('bookmarks');
+            const bookmark = document.createElement('p');
+            bookmark.innerHTML = `<a href="#" onclick="showSection('${sectionId}')"><i class="fas fa-link"></i> ${title}</a>`;
+            bookmarkList.appendChild(bookmark);
+        }
+
+        function showExample(exampleId) {
+            const example = document.getElementById(exampleId);
+            example.style.display = example.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function openModal() {
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        function showRandomFact() {
+            const randomFact = facts[Math.floor(Math.random() * facts.length)];
+            document.getElementById('modal-fact').textContent = randomFact;
+            openModal();
+        }
+
+        function updateWordCount(sectionId) {
+            const section = document.getElementById(sectionId);
+            const text = section.textContent.trim();
+            const wordCount = text.split(/\s+/).length;
+            document.getElementById(`${sectionId}-word-count`).textContent = wordCount;
+        }
+
+        function startGame() {
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById('game-score').textContent = score;
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = quizQuestions[currentQuestion];
+            document.getElementById('game-question').textContent = q.question;
+            const optionsDiv = document.getElementById('game-options');
+            optionsDiv.innerHTML = '';
+            q.options.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.innerHTML = `<i class="fas fa-circle"></i> ${option}`;
+                btn.onclick = () => checkAnswer(index);
+                optionsDiv.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selected) {
+            const q = quizQuestions[currentQuestion];
+            if (selected === q.correct) {
+                score += 1000000 / quizQuestions.length;
+                document.getElementById('game-score').textContent = Math.round(score);
+            }
+            currentQuestion++;
+            if (currentQuestion < quizQuestions.length) {
+                showQuestion();
+            } else {
+                document.getElementById('game-question').textContent = `Игра окончена! Ваш выигрыш: ${Math.round(score)} руб.`;
+                document.getElementById('game-options').innerHTML = '<button onclick="startGame()"><i class="fas fa-redo"></i> Сыграть снова</button>';
+            }
+        }
+
+        window.onscroll = function() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progress-bar').style.width = scrolled + '%';
+        };
+
+        updateWordCount('intro');
+    </script>
+</body>
+
+</html>
